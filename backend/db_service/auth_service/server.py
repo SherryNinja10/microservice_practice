@@ -1,9 +1,17 @@
 from flask import Flask, request, jsonify, Response
 from flask_cors import CORS
-import psycopg2, requests, bcrypt, jwt, datetime
+from dotenv import load_dotenv
+import psycopg2, requests, bcrypt, jwt, datetime, os
 
 app = Flask(__name__)
 cors = CORS(app, methods="*")
+
+load_dotenv()
+
+private_key = ''
+
+with open("private.pem") as f:
+    private_key = f.read()
 
 connection = psycopg2.connect(
     host="localhost",
@@ -69,8 +77,9 @@ def login():
                     "exp": datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(minutes=30)
                 }
 
-                token = jwt.encode(payload=payload, )
-                return jsonify({ "message": "successfull login" }), 200
+                token = jwt.encode(payload, private_key, algorithm="RS256")
+
+                return jsonify({ "message": "successfull login", "token": token }), 200
             else:
                 return jsonify({ "message": "incorrect password" }), 403
         

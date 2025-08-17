@@ -34,7 +34,9 @@ def auth_function(path):
         params=request.args
     )
 
-    return Response(resp.content, status=resp.status_code, headers=dict(resp.headers))
+    res = Response(resp.content, status=resp.status_code, headers=dict(resp.headers))
+    res.set_cookie("token", value=resp.json()["token"], httponly=True, secure="True")
+    return res
 
 if __name__ == '__main__':
     app.run(debug=True,port=5000)
