@@ -25,8 +25,8 @@ connection = psycopg2.connect(
 
 cur = connection.cursor()
 
-@app.route("/addition", methods=['POST'])
-def addition():
+@app.route("/multiplication", methods=['POST'])
+def multiplication():
     try:
 
         token = request.cookies.get('token')
@@ -50,15 +50,15 @@ def addition():
             number1 = data["number1"]
             number2 = data['number2']
 
-            answer = number1 + number2
+            answer = number1 * number2
 
             cur.execute(
-                "INSERT INTO addition (number1, number2, answer, user_id) VALUES (%s, %s, %s, %s)", (number1, number2, answer, user_id)
+                "INSERT INTO multiplication (number1, number2, answer, user_id) VALUES (%s, %s, %s, %s)", (number1, number2, answer, user_id)
             )
 
             connection.commit()
 
-            return jsonify({ "answer": answer, "calculation": f"{number1} + {number2}", "message": "Addition calculation done and added to addition history" }), 200
+            return jsonify({ "answer": answer, "calculation": f"{number1} * {number2}", "message": "Multiplication calculation done and added to multiplication history" }), 200
         
     except jwt.ExpiredSignatureError:
         print("Token has expired")
@@ -98,4 +98,4 @@ def addition():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5003)
+    app.run(debug=True, port=5005)
